@@ -1,0 +1,26 @@
+body {
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+#head {
+    margin: 10px 0;
+    padding: 10px;
+    background-color: #C5FFFD;
+}
+
+#content {
+    margin: 10px 0;
+    padding: 10px;
+    background-color: #88D9E6;
+}
+.required {
+    margin: 0 3px;
+    padding: 3px;
+    /* background-color: rgb(168, 43, 11); */
+    color: red;
+}
+
+.error {
+    color: red;
+}
