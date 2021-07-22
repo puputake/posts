@@ -2,6 +2,7 @@
 session_start();
 require('dbconnect.php');
 
+// ログインしているユーザーのみアクセスを許可する
 if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
   $_SESSION['time'] = time();
 
@@ -12,8 +13,9 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
   header('Location: login.php');
   exit();
 }
-
+// フォームが送信された場合
 if (!empty($_POST)) {
+  // メッセージが空でない場合
   if ($_POST["reply_post_id"] == "")
     $_POST["reply_post_id"] = 0;
   $message = $db->prepare('INSERT INTO posts SET member_id=?,message=?,reply_message_id=?, created=NOW()');
@@ -23,16 +25,21 @@ if (!empty($_POST)) {
     $_POST['reply_post_id']
   ));
 
+  // 再読み込み時の重複登録を防ぐため、POSTの値を空にする
   header('Location: index.php');
   exit();
 }
 
+// ページネーションの実装
 $page = $_REQUEST['page'];
+
+// パラメーターに異常値が入った場合（空欄や１以下）
 if ($page == '') {
   $page = 1;
 }
 $page = max($page, 1);
 
+// パラメーターに異常値が入った場合（最大ページより大きい値）
 $counts = $db->query('SELECT COUNT(*) AS cnt FROM posts');
 $cnt = $counts->fetch();
 $maxPage = ceil($cnt['cnt'] / 5);
@@ -40,11 +47,12 @@ $page = min($page, $maxPage);
 
 $start = ($page - 1) * 5;
 
+// 投稿を取得
 $posts = $db->prepare('SELECT m.name, m.picture, p.* FROM members m, posts p WHERE m.id=p.member_id ORDER BY p.created DESC LIMIT ?,5');
 $posts->bindParam(1, $start, PDO::PARAM_INT);
 $posts->execute();
 
-
+// ［Re］がクリックされた場合
 if (isset($_REQUEST['res'])) {
   //返信の処理
   $response = $db->prepare('SELECT m.name, m.picture, p.* FROM members m, posts p WHERE m.id=p.member_id AND p.id=?');

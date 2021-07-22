@@ -2,6 +2,7 @@
 session_start();
 require('dbconnect.php');
 
+// urlパラメーターが空の場合
 if (empty($_REQUEST['id'])) {
   header('Location: index.php');
   exit();

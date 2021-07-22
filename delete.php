@@ -2,6 +2,7 @@
 session_start();
 require('dbconnect.php');
 
+// セッションidが記録されている場合
 if (isset($_SESSION['id'])) {
     $id = $_REQUEST['id'];
 

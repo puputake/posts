@@ -6,7 +6,9 @@ if (!isset($_SESSION['join'])) {
 	header('Location: index.php');
 	exit();
 }
+// フォームが送信された場合
 if (!empty($_POST)) {
+	// DBに登録
 	$statement = $db->prepare('INSERT INTO members SET name=?, email=?, password=?, picture=?, created=NOW()');
 	$statement->execute(array(
 		$_SESSION['join']['name'],

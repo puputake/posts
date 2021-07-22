@@ -2,13 +2,17 @@
 session_start();
 require('dbconnect.php');
 
+// クッキーに値が保存されている場合
 if ($_COOKIE['email'] !== '') {
   $email = $_COOKIE['email'];
 }
 
+// フォームが送信された場合
 if (!empty($_POST)) {
+  // メールアドレスにクッキー以外の値が入力された場合
   $email = $_POST['email'];
   
+  // 入力欄が空でない場合
   if ($_POST['email'] != '' && $_POST['password'] !== '') {
     $login = $db->prepare('SELECT * FROM members WHERE email=? AND password=?');
     $login->execute(array(
@@ -17,10 +21,12 @@ if (!empty($_POST)) {
     ));
     $member = $login->fetch();
 
+    // ログインに成功した場合
     if ($member) {
       $_SESSION['id'] = $member['id'];
       $_SESSION['time'] = time();
 
+      // メールアドレスをクッキーに保存
       if ($_POST['save'] === 'on') {
         setcookie('email', $_POST['email'], time()+60*60*24*14);
       }

@@ -2,7 +2,9 @@
 session_start();
 require('../dbconnect.php');
 
+// フォームが送信された場合
 if (!empty($_POST)) {
+	// エラーチェック
 	if ($_POST['name'] === '') {
 		$error['name'] = 'blank';
 	}
@@ -33,6 +35,7 @@ if (!empty($_POST)) {
 		}
 	}
 
+	// エラーが発生していない場合
 	if (empty($error)) {
 		$image = date('YmdHis') . $_FILES['image']['name'];
 		move_uploaded_file($_FILES['image']['tmp_name'], '../member_picture/' . $image);
@@ -43,6 +46,7 @@ if (!empty($_POST)) {
 	}
 }
 
+// check.phpで「書き直す」を押された場合
 if ($_REQUEST['action'] == 'rewrite' && isset($_SESSION['join'])) {
 	$_POST = $_SESSION['join'];
 }
@@ -100,7 +104,7 @@ if ($_REQUEST['action'] == 'rewrite' && isset($_SESSION['join'])) {
 					</dd>
 					<dt>写真など</dt>
 					<?php if ($error['image'] === 'type') : ?>
-						<p class="error">*写真ファイルを添付してください</p>
+						<p class="error">*画像ファイルを添付してください</p>
 					<?php endif; ?>
 					<?php if (!empty($error)) : ?>
 						<p class="error">*恐れ入りますが、画像を改めて指定してください</p>
