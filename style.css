@@ -21,6 +21,8 @@ body {
     color: red;
 }
 
-.error {
+.error, .guest {
     color: red;
+    font-weight: bold;
 }
+

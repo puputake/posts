@@ -60,6 +60,7 @@ if (!empty($_POST)) {
     <div id="content">
       <div id="lead">
         <p>メールアドレスとパスワードを記入してログインしてください。</p>
+        <p class="guest">※ゲストとして利用する場合は、メールアドレス、パスワードともに guest と入力してください。</p>
         <p>入会手続きがまだの方はこちらからどうぞ。</p>
         <p>&raquo;<a href="join/">入会手続きをする</a></p>
       </div>
