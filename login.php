@@ -9,37 +9,48 @@ if ($_COOKIE['email'] !== '') {
 
 // フォームが送信された場合
 if (!empty($_POST)) {
-  // メールアドレスにクッキー以外の値が入力された場合
-  $email = $_POST['email'];
-  
-  // 入力欄が空でない場合
-  if ($_POST['email'] != '' && $_POST['password'] !== '') {
-    $login = $db->prepare('SELECT * FROM members WHERE email=? AND password=?');
-    $login->execute(array(
-      $_POST['email'],
-      sha1($_POST['password'])
-    ));
-    $member = $login->fetch();
+  // ログインボタンが押された場合
+  if ($_POST['start'] == 'login') {
+    // メールアドレスにクッキー以外の値が入力された場合
+    $email = $_POST['email'];
 
-    // ログインに成功した場合
-    if ($member) {
-      $_SESSION['id'] = $member['id'];
-      $_SESSION['time'] = time();
+    // 入力欄が空でない場合
+    if ($_POST['email'] != '' && $_POST['password'] != '') {
+      $login = $db->prepare('SELECT * FROM members WHERE email=? AND password=?');
+      $login->execute(array(
+        $_POST['email'],
+        sha1($_POST['password'])
+      ));
+      $member = $login->fetch();
 
-      // メールアドレスをクッキーに保存
-      if ($_POST['save'] === 'on') {
-        setcookie('email', $_POST['email'], time()+60*60*24*14);
+      // ログインに成功した場合
+      if ($member) {
+        $_SESSION['id'] = $member['id'];
+        $_SESSION['time'] = time();
+
+        // メールアドレスをクッキーに保存
+        if ($_POST['save'] === 'on') {
+          setcookie('email', $_POST['email'], time() + 60 * 60 * 24 * 14);
+        }
+
+        header('Location: index.php');
+        exit();
+      } else {
+        $error['login'] = 'failed';
       }
-
-      header('Location: index.php');
-      exit();
     } else {
-      $error['login'] = 'failed';
+      $error['login'] = 'blank';
     }
-  } else {
-    $error['login'] = 'blank';
+  }
+  // ゲストモードボタンが押された場合
+  if ($_POST['start'] == 'guest') {
+    $_SESSION['id'] = 12;
+    $_SESSION['time'] = time();
+    header('Location: index.php');
+    exit();
   }
 }
+
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -59,8 +70,7 @@ if (!empty($_POST)) {
     </div>
     <div id="content">
       <div id="lead">
-        <p>メールアドレスとパスワードを記入してログインしてください。</p>
-        <p class="guest">※ゲストとして利用する場合は、メールアドレス、パスワードともに guest と入力してください。</p>
+        <p>メールアドレスとパスワードを記入してログインしてください。<br>ゲストモードは各項目入力不要です。</p>
         <p>入会手続きがまだの方はこちらからどうぞ。</p>
         <p>&raquo;<a href="join/">入会手続きをする</a></p>
       </div>
@@ -87,8 +97,11 @@ if (!empty($_POST)) {
             <label for="save">次回からは自動的にログインする</label>
           </dd>
         </dl>
-        <div>
-          <input type="submit" value="ログインする" />
+        <div class="col-auto">
+          <button type="submit" name="start" value="login" class="btn btn-primary mb-3">ログインする</button>
+        </div>
+        <div class="col-auto">
+          <button type="submit" name="start" value="guest" class="btn btn-warning mb-3">ゲストとして参加する</button>
         </div>
       </form>
     </div>
